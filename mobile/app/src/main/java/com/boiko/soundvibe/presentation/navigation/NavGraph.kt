@@ -16,9 +16,10 @@ fun NavGraph(startDestination: String) {
         composable(route = Routes.ON_BOARDING_SCREEN) {
             val viewModel = hiltViewModel<OnBoardingViewModel>()
             //OnBoardingScreen(event = viewModel::onEvent)
-            OnBoardingScreen { route ->
-                    navController.navigate(route)
-            }
+            OnBoardingScreen(
+                navigate = navController::navigate,
+                event = viewModel::onEvent
+            )
         }
     }
 }
