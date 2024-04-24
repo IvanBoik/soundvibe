@@ -105,4 +105,7 @@ dependencies {
     //noinspection KaptUsageInsteadOfKsp
     kapt libs.androidx.room.compiler
     implementation libs.androidx.room.ktx
+
+    implementation libs.datetime
+    coreLibraryDesugaring libs.desugar.jdk.libs
 }
