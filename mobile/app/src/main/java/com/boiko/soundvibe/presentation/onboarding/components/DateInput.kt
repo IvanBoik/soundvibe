@@ -3,6 +3,7 @@ package com.boiko.soundvibe.presentation.onboarding.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +36,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.boiko.soundvibe.ui.theme.Montserrat
+import com.boiko.soundvibe.util.Constants
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
 
 @Composable
@@ -44,7 +51,10 @@ fun DateInput(
     placeholder: String,
     dialogState: MaterialDialogState
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+
     Spacer(modifier = Modifier.height(16.dp))
+    //TODO show error message when value is not valid
     BasicTextField(
         value = formattedValue,
         onValueChange = {},
@@ -60,13 +70,16 @@ fun DateInput(
         modifier = Modifier
             .fillMaxWidth(0.9f)
             .height(46.dp)
+            .background(Color.Transparent, RoundedCornerShape(16.dp))
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(16.dp)
             )
-            .background(Color.Transparent, RoundedCornerShape(16.dp))
-            .clickable { dialogState.show() },
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { dialogState.show() },
         decorationBox = {innerTextField ->
             Row (
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -145,5 +158,28 @@ fun DateInput(
 @Preview
 @Composable
 private fun DateInputPreview() {
+    val state = remember {
+        mutableStateOf(LocalDate.now())
+    }
+    val formattedState by remember {
+        derivedStateOf {
+            val date = state.value
+            if (date == LocalDate.now()) {
+                ""
+            }
+            else {
+                "${date.dayOfMonth} ${Constants.MONTHS[date.monthValue-1]} ${date.year}"
+            }
 
+        }
+    }
+    val dialogState = rememberMaterialDialogState()
+    MaterialTheme {
+        DateInput(
+            value = state,
+            formattedValue =  formattedState,
+            placeholder = "Birthday",
+            dialogState = dialogState
+        )
+    }
 }

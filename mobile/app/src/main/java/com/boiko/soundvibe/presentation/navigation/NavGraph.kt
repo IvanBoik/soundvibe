@@ -20,5 +20,8 @@ fun NavGraph(startDestination: String) {
                 event = viewModel::onEvent
             )
         }
+        composable(route = Routes.ARTIST_SELECTION_SCREEN) {
+
+        }
     }
 }

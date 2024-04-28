@@ -14,21 +14,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boiko.soundvibe.R
+import com.boiko.soundvibe.presentation.navigation.Routes
 import com.boiko.soundvibe.presentation.onboarding.OnBoardingEvent
+import com.boiko.soundvibe.ui.theme.Montserrat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -40,6 +47,9 @@ fun LogInBottomSheet(
     navigate: (String) -> Unit,
     event: (OnBoardingEvent) -> Unit
 ) {
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+
     Box(modifier = Modifier.fillMaxHeight(0.85f)) {
         Column(
             verticalArrangement = Arrangement.Top,
@@ -75,7 +85,7 @@ fun LogInBottomSheet(
             }
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                text = "Sign up with",
+                text = "Log in with",
                 style = TextStyle(
                     color = MaterialTheme.colorScheme.tertiary,
                     fontSize = 16.sp
@@ -96,6 +106,41 @@ fun LogInBottomSheet(
                 ThirdServiceButton(icon = R.drawable.google) {
 
                 }
+            }
+            Spacer(modifier = Modifier.height(30.dp))
+            TextInput(value = email, placeholder = "Email") {
+                it.isNotEmpty()
+            }
+            TextInput(
+                value = password,
+                placeholder = "Password",
+                visualTransformation = PasswordVisualTransformation()
+            ) {
+                it.isNotEmpty()
+            }
+            Spacer(modifier = Modifier.height(44.dp))
+            Button(
+                onClick = {
+                    //TODO send log in data to backend; save app entry
+                    event(OnBoardingEvent.LogIn)
+                    navigate(Routes.ARTIST_SELECTION_SCREEN)
+                },
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .height(46.dp)
+            ) {
+                Text(
+                    text = "Log in",
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 20.sp,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
             }
         }
     }

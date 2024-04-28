@@ -42,6 +42,7 @@ fun TextInput(
     validate: (String) -> Boolean
 ) {
     Spacer(modifier = Modifier.height(16.dp))
+    //TODO show error message when value is not valid
     BasicTextField(
         value = value.value,
         onValueChange = { value.value = it },

@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,12 +34,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boiko.soundvibe.R
+import com.boiko.soundvibe.presentation.navigation.Routes.ARTIST_SELECTION_SCREEN
 import com.boiko.soundvibe.presentation.onboarding.OnBoardingEvent
+import com.boiko.soundvibe.ui.theme.Montserrat
 import com.boiko.soundvibe.util.Constants.MONTHS
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.CoroutineScope
@@ -129,6 +132,7 @@ fun SignUpBottomSheet(
             }
             Spacer(modifier = Modifier.height(30.dp))
             TextInput(value = email, placeholder = "Email") {
+                //TODO put email pattern
                 it.isNotEmpty()
             }
             TextInput(
@@ -136,6 +140,7 @@ fun SignUpBottomSheet(
                 placeholder = "Password",
                 visualTransformation = PasswordVisualTransformation()
             ) {
+                //TODO put password pattern (min 8 characters, with numbers and letters)
                 it.isNotEmpty()
             }
             TextInput(value = nickname, placeholder = "Nickname") {
@@ -147,6 +152,30 @@ fun SignUpBottomSheet(
                 placeholder = "Birthday",
                 dialogState = birthdayDialogState
             )
+            Spacer(modifier = Modifier.height(44.dp))
+            Button(
+                onClick = {
+                    //TODO send sign up data to backend; save app entry
+                    event(OnBoardingEvent.SignUp)
+                    navigate(ARTIST_SELECTION_SCREEN)
+                },
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .height(46.dp)
+            ) {
+                Text(
+                    text = "Sign up",
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 20.sp,
+                        fontFamily = Montserrat,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
         }
     }
 }
