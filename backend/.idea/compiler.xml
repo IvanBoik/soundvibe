@@ -2,10 +2,12 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="eureka_server" />
         <module name="user_service" />
         <module name="music_service" />
         <module name="cache_service" />
@@ -14,14 +16,16 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="cache_service" target="21" />
-      <module name="music_service" target="21" />
+      <module name="eureka_server" target="17" />
+      <module name="music_service" target="17" />
       <module name="search_service" target="21" />
-      <module name="user_service" target="21" />
+      <module name="user_service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cache_service" options="-parameters" />
+      <module name="eureka_server" options="-parameters" />
       <module name="music_service" options="-parameters" />
       <module name="search_service" options="-parameters" />
       <module name="user_service" options="-parameters" />
