@@ -15,6 +15,6 @@ public class TestController {
 
     @GetMapping("/ids")
     public ResponseEntity<?> getAllIDs() {
-        return restTemplate.getForEntity("http://MUSIC-SERVICE/api/v1/songs/ids", Long[].class);
+        return restTemplate.getForEntity("http://music-service/api/v1/songs/ids", Long[].class);
     }
 }
