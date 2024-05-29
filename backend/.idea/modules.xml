@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/cache_service/cache_service.iml" filepath="$PROJECT_DIR$/cache_service/cache_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/music_service/music_service.iml" filepath="$PROJECT_DIR$/music_service/music_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/search_service/search_service.iml" filepath="$PROJECT_DIR$/search_service/search_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/user_service/user_service.iml" filepath="$PROJECT_DIR$/user_service/user_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend.iml" filepath="$PROJECT_DIR$/backend.iml" />
     </modules>
   </component>
 </project>
