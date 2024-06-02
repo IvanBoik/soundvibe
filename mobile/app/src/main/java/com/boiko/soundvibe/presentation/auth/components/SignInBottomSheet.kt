@@ -1,4 +1,4 @@
-package com.boiko.soundvibe.presentation.onboarding.components
+package com.boiko.soundvibe.presentation.auth.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,22 +33,22 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boiko.soundvibe.R
-import com.boiko.soundvibe.presentation.navigation.Routes
-import com.boiko.soundvibe.presentation.onboarding.OnBoardingEvent
+import com.boiko.soundvibe.presentation.auth.AuthUiEvent
+import com.boiko.soundvibe.presentation.auth.AuthViewModel
 import com.boiko.soundvibe.ui.theme.Montserrat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogInBottomSheet(
+fun SignInBottomSheet(
     sheetState: SheetState,
     scope: CoroutineScope,
     navigate: (String) -> Unit,
-    event: (OnBoardingEvent) -> Unit
+    viewModel: AuthViewModel
 ) {
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf(viewModel.state.signInEmail) }
+    val password = remember { mutableStateOf(viewModel.state.signInPassword) }
 
     Box(modifier = Modifier.fillMaxHeight(0.85f)) {
         Column(
@@ -122,8 +122,7 @@ fun LogInBottomSheet(
             Button(
                 onClick = {
                     //TODO send log in data to backend; save app entry
-                    event(OnBoardingEvent.LogIn)
-                    navigate(Routes.ARTIST_SELECTION_SCREEN)
+                    viewModel.onEvent(AuthUiEvent.SignIn)
                 },
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary

@@ -1,4 +1,4 @@
-package com.boiko.soundvibe.presentation.onboarding.components
+package com.boiko.soundvibe.presentation.auth.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,9 +37,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.boiko.soundvibe.R
-import com.boiko.soundvibe.presentation.navigation.Routes.ARTIST_SELECTION_SCREEN
-import com.boiko.soundvibe.presentation.onboarding.OnBoardingEvent
+import com.boiko.soundvibe.presentation.auth.AuthUiEvent
+import com.boiko.soundvibe.presentation.auth.AuthViewModel
 import com.boiko.soundvibe.ui.theme.Montserrat
 import com.boiko.soundvibe.util.Constants.MONTHS
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -53,12 +54,12 @@ fun SignUpBottomSheet(
     sheetState: SheetState,
     scope: CoroutineScope,
     navigate: (String) -> Unit,
-    event: (OnBoardingEvent) -> Unit
+    viewModel: AuthViewModel
 ) {
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    val nickname = remember { mutableStateOf("") }
-    val birthday = remember { mutableStateOf(LocalDate.now()) }
+    val email = remember { mutableStateOf(viewModel.state.signUpEmail) }
+    val password = remember { mutableStateOf(viewModel.state.signUpPassword) }
+    val nickname = remember { mutableStateOf(viewModel.state.signUpNickname) }
+    val birthday = remember { mutableStateOf(viewModel.state.signUpBirthday) }
     val formattedBirthday by remember {
         derivedStateOf {
             val date = birthday.value
@@ -156,8 +157,7 @@ fun SignUpBottomSheet(
             Button(
                 onClick = {
                     //TODO send sign up data to backend; save app entry
-                    event(OnBoardingEvent.SignUp)
-                    navigate(ARTIST_SELECTION_SCREEN)
+                    viewModel.onEvent(AuthUiEvent.SignUp)
                 },
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary
@@ -191,7 +191,7 @@ private fun SignUpBottomSheetPreview() {
             sheetState = sheetState,
             scope = scope,
             navigate = {},
-            event = {}
+            viewModel = viewModel()
         )
     }
 }

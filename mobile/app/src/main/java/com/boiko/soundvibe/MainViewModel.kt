@@ -16,7 +16,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     appEntryUseCases: AppEntryUseCases
 ): ViewModel() {
-    var startDestination by mutableStateOf(Routes.ON_BOARDING_SCREEN)
+    var startDestination by mutableStateOf(Routes.AUTH_SCREEN)
         private set
 
     init {
@@ -24,7 +24,7 @@ class MainViewModel @Inject constructor(
             startDestination = if (shouldStartFromHomeScreen) {
                 Routes.HOME_SCREEN
             } else {
-                Routes.ON_BOARDING_SCREEN
+                Routes.AUTH_SCREEN
             }
         }.launchIn(viewModelScope)
     }

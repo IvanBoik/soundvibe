@@ -1,4 +1,4 @@
-package com.boiko.soundvibe.presentation.onboarding.components
+package com.boiko.soundvibe.presentation.auth.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

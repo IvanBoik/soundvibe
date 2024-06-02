@@ -1,6 +1,7 @@
-package com.boiko.soundvibe.presentation.onboarding
+package com.boiko.soundvibe.presentation.auth
 
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,28 +33,50 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.boiko.soundvibe.R
-import com.boiko.soundvibe.presentation.onboarding.components.LogInBottomSheet
-import com.boiko.soundvibe.presentation.onboarding.components.SignUpBottomSheet
+import com.boiko.soundvibe.auth.AuthResult
+import com.boiko.soundvibe.presentation.auth.components.SignInBottomSheet
+import com.boiko.soundvibe.presentation.auth.components.SignUpBottomSheet
+import com.boiko.soundvibe.presentation.navigation.Routes.HOME_SCREEN
 import com.boiko.soundvibe.ui.theme.Montserrat
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OnBoardingScreen(
+fun AuthScreen(
     navigate: (String) -> Unit,
-    event: (OnBoardingEvent) -> Unit
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
     val scope = rememberCoroutineScope()
     var isClickOnSignUp by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    LaunchedEffect(viewModel, context) {
+        viewModel.authResults.collect {result ->
+            when(result) {
+                is AuthResult.Authorized -> {
+                    sheetState.hide()
+                    navigate(HOME_SCREEN)
+                }
+                is AuthResult.Unauthorized -> {
+                    Toast.makeText(context, "You're not authorized", Toast.LENGTH_LONG).show()
+                }
+                is AuthResult.UnknownError -> {
+                    Toast.makeText(context, "An unknown error occurred", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -66,15 +90,15 @@ fun OnBoardingScreen(
                     sheetState = sheetState,
                     scope = scope,
                     navigate = navigate,
-                    event = event
+                    viewModel = viewModel
                 )
             }
             else {
-                LogInBottomSheet(
+                SignInBottomSheet(
                     sheetState = sheetState,
                     scope = scope,
                     navigate = navigate,
-                    event = event
+                    viewModel = viewModel
                 )
             }
     }) {
@@ -168,9 +192,8 @@ private fun getGradient(): Brush {
 @Composable
 private fun OnBoardingScreenPreview() {
     MaterialTheme {
-        OnBoardingScreen(
-            navigate = {},
-            event = {}
+        AuthScreen(
+            navigate = {}
         )
     }
 }
