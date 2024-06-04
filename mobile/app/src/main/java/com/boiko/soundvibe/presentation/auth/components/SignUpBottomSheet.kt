@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -53,13 +54,12 @@ import java.time.LocalDate
 fun SignUpBottomSheet(
     sheetState: SheetState,
     scope: CoroutineScope,
-    navigate: (String) -> Unit,
     viewModel: AuthViewModel
 ) {
-    val email = remember { mutableStateOf(viewModel.state.signUpEmail) }
-    val password = remember { mutableStateOf(viewModel.state.signUpPassword) }
-    val nickname = remember { mutableStateOf(viewModel.state.signUpNickname) }
-    val birthday = remember { mutableStateOf(viewModel.state.signUpBirthday) }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+    val nickname = remember { mutableStateOf("") }
+    val birthday = remember { mutableStateOf(LocalDate.now()) }
     val formattedBirthday by remember {
         derivedStateOf {
             val date = birthday.value
@@ -73,6 +73,8 @@ fun SignUpBottomSheet(
         }
     }
     val birthdayDialogState = rememberMaterialDialogState()
+
+    val focusManager = LocalFocusManager.current
 
     Box(modifier = Modifier.fillMaxHeight(0.85f)) {
         Column(
@@ -90,7 +92,12 @@ fun SignUpBottomSheet(
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
                         .padding(start = 20.dp)
-                        .clickable { scope.launch { sheetState.hide() } }
+                        .clickable {
+                            scope.launch {
+                                focusManager.clearFocus()
+                                sheetState.hide()
+                            }
+                        }
                 )
                 Text(
                     text = "Sign up",
@@ -156,8 +163,12 @@ fun SignUpBottomSheet(
             Spacer(modifier = Modifier.height(44.dp))
             Button(
                 onClick = {
-                    //TODO send sign up data to backend; save app entry
-                    viewModel.onEvent(AuthUiEvent.SignUp)
+                    viewModel.onEvent(AuthUiEvent.SignUp(
+                        email = email.value,
+                        password = password.value,
+                        nickname = nickname.value,
+                        birthday = birthday.value
+                    ))
                 },
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary
@@ -190,7 +201,6 @@ private fun SignUpBottomSheetPreview() {
         SignUpBottomSheet(
             sheetState = sheetState,
             scope = scope,
-            navigate = {},
             viewModel = viewModel()
         )
     }

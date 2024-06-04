@@ -18,6 +18,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -41,15 +43,34 @@ object AppModule {
         readAppEntry = ReadAppEntry(localUserManager),
         saveAppEntry = SaveAppEntry(localUserManager)
     )
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(prefs: SharedPreferences): OkHttpClient {
+        val builder = OkHttpClient().newBuilder()
+            .addInterceptor(Interceptor {chain ->
+                val token = prefs.getString("jwt", "")
+                val original = chain.request()
+                if (original.url.pathSegments.contains("auth")) {
+                    return@Interceptor chain.proceed(original)
+                }
+                val request = original.newBuilder()
+                    .addHeader("Authorization", "Bearer $token")
+                    .build()
+                chain.proceed(request)
+            })
+        return builder.build()
+    }
     
     @Provides
     @Singleton
-    fun provideAuthApi(): AuthApi {
+    fun provideAuthApi(client: OkHttpClient): AuthApi {
         val moshi = Moshi.Builder()
             .add(LocaleDateAdapter)
             .build()
         return Retrofit.Builder()
             .baseUrl("http:10.0.2.2:8080/api/v1/")
+            .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create()

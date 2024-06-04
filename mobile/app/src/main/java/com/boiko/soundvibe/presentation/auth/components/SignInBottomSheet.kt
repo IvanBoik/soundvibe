@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -44,11 +45,12 @@ import kotlinx.coroutines.launch
 fun SignInBottomSheet(
     sheetState: SheetState,
     scope: CoroutineScope,
-    navigate: (String) -> Unit,
     viewModel: AuthViewModel
 ) {
-    val email = remember { mutableStateOf(viewModel.state.signInEmail) }
-    val password = remember { mutableStateOf(viewModel.state.signInPassword) }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+
+    val focusManager = LocalFocusManager.current
 
     Box(modifier = Modifier.fillMaxHeight(0.85f)) {
         Column(
@@ -66,7 +68,12 @@ fun SignInBottomSheet(
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
                         .padding(start = 20.dp)
-                        .clickable { scope.launch { sheetState.hide() } }
+                        .clickable {
+                            scope.launch {
+                                focusManager.clearFocus()
+                                sheetState.hide()
+                            }
+                        }
                 )
                 Text(
                     text = "Log in",
@@ -121,8 +128,10 @@ fun SignInBottomSheet(
             Spacer(modifier = Modifier.height(44.dp))
             Button(
                 onClick = {
-                    //TODO send log in data to backend; save app entry
-                    viewModel.onEvent(AuthUiEvent.SignIn)
+                    viewModel.onEvent(AuthUiEvent.SignIn(
+                        email = email.value,
+                        password = password.value
+                    ))
                 },
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary

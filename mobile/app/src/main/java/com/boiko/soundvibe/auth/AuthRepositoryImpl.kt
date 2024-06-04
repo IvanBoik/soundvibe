@@ -30,7 +30,7 @@ class AuthRepositoryImpl(
 
             AuthResult.Authorized()
         } catch (e: HttpException) {
-            if (e.code() == 401) {
+            if (e.code() == 401 || e.code() == 403) {
                 AuthResult.Unauthorized()
             } else {
                 AuthResult.UnknownError()
@@ -55,7 +55,7 @@ class AuthRepositoryImpl(
 
             AuthResult.Authorized()
         } catch (e: HttpException) {
-            if (e.code() == 401) {
+            if (e.code() == 401 || e.code() == 403) {
                 AuthResult.Unauthorized()
             } else {
                 AuthResult.UnknownError()

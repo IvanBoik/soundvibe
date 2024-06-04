@@ -3,6 +3,7 @@ package com.boiko.soundvibe.presentation.auth
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -60,12 +62,15 @@ fun AuthScreen(
     val scope = rememberCoroutineScope()
     var isClickOnSignUp by remember { mutableStateOf(false) }
 
+    val focusManager = LocalFocusManager.current
+
     val context = LocalContext.current
     LaunchedEffect(viewModel, context) {
         viewModel.authResults.collect {result ->
             when(result) {
                 is AuthResult.Authorized -> {
                     sheetState.hide()
+                    viewModel.onEvent(AuthUiEvent.SaveAppEntry)
                     navigate(HOME_SCREEN)
                 }
                 is AuthResult.Unauthorized -> {
@@ -89,7 +94,6 @@ fun AuthScreen(
                 SignUpBottomSheet(
                     sheetState = sheetState,
                     scope = scope,
-                    navigate = navigate,
                     viewModel = viewModel
                 )
             }
@@ -97,7 +101,6 @@ fun AuthScreen(
                 SignInBottomSheet(
                     sheetState = sheetState,
                     scope = scope,
-                    navigate = navigate,
                     viewModel = viewModel
                 )
             }
@@ -109,6 +112,12 @@ fun AuthScreen(
                     painter = painterResource(id = R.drawable.ic_onboarding_background),
                     contentScale = ContentScale.FillBounds,
                 )
+                .clickable {
+                    scope.launch {
+                        focusManager.clearFocus()
+                        sheetState.hide()
+                    }
+                }
         ) {
             Column(
                 verticalArrangement = Arrangement.Bottom,
